@@ -1,0 +1,44 @@
+{
+    "manifest_version": 3,
+  
+    "name": "RecentTab: Cycle Last Used Tabs",
+    "version": "1.0",
+    "short_name": "RecentTab",
+    "permissions": [
+      "tabs"
+    ],
+    "icons": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    },
+    "background": {
+        "service_worker": "background.js"
+      },
+    "commands": {
+      "quick_switch": {
+        "suggested_key": {
+          "default": "Alt+W",
+          "mac": "Alt+W"
+        },
+        "description": "Quick Switch - Switch to the last tab when pressed once. Press multiple times in quick succession to switch to the nth most recently used tab."
+      },
+      "previous": {
+        "suggested_key": {
+          "default": "Alt+Q",
+          "mac": "Alt+Q"
+        },
+        "description": "Previous - Backtrack through the list of recently used tabs"
+      },
+      "foward": {
+        "suggested_key": {
+          "default": "Alt+E",
+          "mac": "Alt+E"
+        },
+        "description": "Foward - Move forward through the most recently used tabs list"
+      }
+    },
+    "action": {
+        "default_icon": "icon16.png"
+    }
+  }
