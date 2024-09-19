@@ -127,15 +127,21 @@ const handleTabRemoval = (tabId, removeInfo) => {
     }
 };
 
-chrome.windows.onCreated.addListener((windowId) => {
-    initializeWindowTabs(windowId)
+chrome.runtime.onInstalled.addListener(function () {
+    chrome.windows.getAll({ populate: true }, (windows) => {
+        windows.forEach(window => initializeWindowTabs(window.id));
+    });    
 });
 
-chrome.windows.onRemoved.addListener((windowId) => {
-    MRULists.delete(windowId);
-    if (MRUTimers.has(windowId)) {
-        clearTimeout(MRUTimers.get(windowId));
-        MRUTimers.delete(windowId);
+chrome.windows.onCreated.addListener((window) => {
+    initializeWindowTabs(window.id)
+});
+
+chrome.windows.onRemoved.addListener((window) => {
+    MRULists.delete(window.id);
+    if (MRUTimers.has(window.id)) {
+        clearTimeout(MRUTimers.get(window.id));
+        MRUTimers.delete(window.id);
     }
 });
 
