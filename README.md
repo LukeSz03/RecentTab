@@ -4,8 +4,8 @@
 ## Features
 
 - **`Alt + W`**: Quickly switch to the last tab when pressed once. Press multiple times in quick succession to switch to the nth most recently used tab.
-- **`Alt + Q`**: Backtrack through the list of recently used tabs. (not implemented)
-- **`Alt + E`**: Move forward through the most recently used tabs list. (not implemented)
+- **`Alt + Q`**: Backtrack through the list of recently used tabs. 
+- **`Alt+Shift+Q`**: Move forward through the most recently used tabs list.
 - Keyboard  shortcuts customizable in Chrome's extension settings
 
 ## Installation

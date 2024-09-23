@@ -32,8 +32,8 @@
       },
       "foward": {
         "suggested_key": {
-          "default": "Alt+E",
-          "mac": "Alt+E"
+          "default": "Alt+Shift+Q",
+          "mac": "Alt+Shift+Q"
         },
         "description": "Foward - Move forward through the most recently used tabs list"
       }

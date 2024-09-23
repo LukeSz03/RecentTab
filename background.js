@@ -1,8 +1,11 @@
 const MRULists = new Map();
 const MRUTimers = new Map();  
+const Stack = [];
+let duration = 0;
 
 var handleCommand = function(command) {
     if (command === "quick_switch") {
+        duration = 200
         chrome.windows.getCurrent({ populate: true }, (window) => {
             const windowId = window.id;
             const orderedSet = MRULists.get(windowId);
@@ -14,7 +17,20 @@ var handleCommand = function(command) {
                 chrome.tabs.update(currentTabId, { active: true, highlighted: true });
             }
         });
-    } 
+    } else if (command === "previous"){
+        duration = 0
+        chrome.windows.getCurrent({ populate: true }, (window) => {
+            const windowId = window.id;
+            const orderedSet = MRULists.get(windowId);
+            if (!orderedSet) return;
+            
+            Stack.push(orderedSet.delete())
+            chrome.tabs.update(orderedSet.currentNode.key, { active: true, highlighted: true });
+        });
+    } else if (command === "foward") {
+        duration = 0
+        chrome.tabs.update(Stack.pop(), { active: true, highlighted: true });
+    }
 };
 
 chrome.action.onClicked.addListener(function(tab) {
@@ -50,16 +66,20 @@ class OrderedSet {
     }
 
     delete(key) {
-        if (this.map.has(key)) {
-            const node = this.map.get(key);
+        const node = key ? this.map.get(key) : this.tail;
+
+        if (node) {
             if (this.currentNode === node) {
-                this.currentNode = node.prev;  
+                this.currentNode = node.prev;
             }
             this._removeNode(node);
-            this.map.delete(key);
+            this.map.delete(node.key); 
+            return node.key; 
         }
+        return null;
     }
 
+    
     previous() {
         if (this.currentNode === null) {
             return null; 
@@ -165,7 +185,7 @@ chrome.tabs.onActivated.addListener(function(tab) {
 
         const timerId = setTimeout(() => {
             orderedSet.add(tab.tabId);
-        }, 200);  
+        }, duration);  
 
         MRUTimers.set(windowId, timerId);
     }
