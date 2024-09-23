@@ -111,12 +111,14 @@ const initializeWindowTabs = (windowId) => {
     });
 };
 
-const handleTabUpdate = (tabId, windowId, changeInfo) => {
-    const orderedSet = MRULists.get(windowId);
+const handleTabUpdate = (tab) => {
+    const orderedSet = MRULists.get(tab.windowId);
     if (orderedSet) {
-        if (changeInfo.status === 'complete') {
-            orderedSet.add(tabId);  
-        }
+        orderedSet.add(tab.id);  
+        chrome.tabs.query({ active: true, currentWindow: true }, (tab) => {
+            orderedSet.add(tab.id);
+        });
+
     }
 };
 
@@ -145,7 +147,7 @@ chrome.windows.onRemoved.addListener((window) => {
     }
 });
 
-chrome.tabs.onUpdated.addListener(handleTabUpdate);
+chrome.tabs.onCreated.addListener(handleTabUpdate);
 chrome.tabs.onRemoved.addListener(handleTabRemoval);
 
 chrome.windows.getAll({ populate: true }, (windows) => {
@@ -172,12 +174,13 @@ chrome.tabs.onActivated.addListener(function(tab) {
 /*
  Mechanism to keep service worker alive
 */
- const keepAliveInterval = setInterval(() => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.type === 'KEEPALIVE_REQUEST') {
+        console.log("Staying Alive")
+    }
+});
+
+const keepAliveInterval = setInterval(() => {
     chrome.runtime.sendMessage({ type: 'KEEPALIVE_REQUEST' });
 }, 15000);
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.type === 'KEEPALIVE_REQUEST') {
-        sendResponse({ status: 'alive' });
-    }
-});
