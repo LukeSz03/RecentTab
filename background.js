@@ -23,7 +23,7 @@ var handleCommand = function(command) {
             const windowId = window.id;
             const orderedSet = MRULists.get(windowId);
             if (!orderedSet) return;
-            
+
             Stack.push(orderedSet.delete())
             chrome.tabs.update(orderedSet.currentNode.key, { active: true, highlighted: true });
         });
@@ -135,10 +135,14 @@ const handleTabUpdate = (tab) => {
     const orderedSet = MRULists.get(tab.windowId);
     if (orderedSet) {
         orderedSet.add(tab.id);  
-        chrome.tabs.query({ active: true, currentWindow: true }, (tab) => {
-            orderedSet.add(tab.id);
-        });
-
+        if (!tab.active) {
+            chrome.tabs.query({ windowId: tab.windowId, active: true, currentWindow: true }, (activeTabs) => {
+                if (activeTabs.length > 0) {
+                    const activeTab = activeTabs[0];
+                    orderedSet.add(activeTab.id);
+                }
+            });
+        }
     }
 };
 
